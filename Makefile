@@ -86,7 +86,7 @@ IMPLS = ada awk bash basic c chuck clojure coffee common-lisp cpp crystal cs d d
 	guile haskell haxe hy io java js julia kotlin livescript logo lua make mal \
 	matlab miniMAL nasm nim objc objpascal ocaml perl perl6 php picolisp plpgsql \
 	plsql powershell ps python r racket rexx rpython ruby rust scala scheme skew \
-	swift swift3 tcl ts vb vhdl vimscript wasm yorick
+	swift swift3 tcl ts vb vhdl vimscript wasm yorick my_python_impl
 
 EXTENSION = .mal
 
@@ -228,6 +228,7 @@ plsql_STEP_TO_PROG =   plsql/$($(1)).sql
 powershell_STEP_TO_PROG =  powershell/$($(1)).ps1
 ps_STEP_TO_PROG =      ps/$($(1)).ps
 python_STEP_TO_PROG =  python/$($(1)).py
+my_python_impl_STEP_TO_PROG =  my_python_impl/$($(1)).py
 r_STEP_TO_PROG =       r/$($(1)).r
 racket_STEP_TO_PROG =  racket/$($(1)).rkt
 rexx_STEP_TO_PROG =    rexx/$($(1)).rexxpp
