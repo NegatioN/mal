@@ -27,7 +27,10 @@ class Reader:
             return None
 
 def read_str(x):
-    return read_form(Reader(tokenize(x)))
+    try:
+        return read_form(Reader(tokenize(x)))
+    except Exception as e:
+        return e #TODO propagate the whole trace
 
 def tokenize(x):
     return token_exp.findall(x)
@@ -45,7 +48,6 @@ def read_form(reader):
 def read_list(reader):
     data_list = []
     start = reader.next()
-    print(start)
     end = end_map[start]
     while True:
         data = read_form(reader)
