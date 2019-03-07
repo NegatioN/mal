@@ -1,8 +1,8 @@
 import re
 
 token_exp = re.compile('''[\s,]*(~@|[\[\]{}()'`~^@]|"(?:\\.|[^\\"])*"?|;.*|[^\s\[\]{}('"`,;)]*)''')
-int_exp = re.compile('\d+')
-float_exp = re.compile('\d+\\.')
+int_exp = re.compile('-?\d+')
+float_exp = re.compile('-?\d+\\.')
 
 end_map = {'(': ')', '[': ']'}
 
