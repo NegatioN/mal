@@ -9,16 +9,16 @@ repl_env = {'+': lambda *x: reduce(operator.add, x),
             '*': lambda *x: reduce(operator.mul, x),
             '/': lambda *x: reduce(operator.truediv, x)}
 
-#TODO figure out why nested calls fail. ex: (+ 5 (* 5 3))
 
 def eval_ast(ast, repl_env):
     if isinstance(ast, list):
-        print(ast)
         a = [EVAL(x, repl_env) for x in ast]
-        print(a)
         return a
     elif isinstance(ast,str): #TODO implement symbols
-        return repl_env[ast]
+        try:
+            return repl_env[ast]
+        except:
+            raise Exception('Couldnt locate symbol: {}'.format(ast))
     else:
         return ast
 
@@ -26,11 +26,9 @@ def eval_ast(ast, repl_env):
 def EVAL(ast, repl_env):
     if isinstance(ast, list):
         if len(ast) > 0:
-            evaluated = [eval_ast(x, repl_env) for x in ast]
-            f = evaluated[0]
-            a = f(*evaluated[1:])
-            print(a)
-            return a
+            args = eval_ast(ast, repl_env)
+            f = args[0]
+            return f(*args[1:])
         else:
             return ast
     else:
@@ -43,7 +41,12 @@ def PRINT(x):
     return pr_str(x)
 
 def rep(x):
-    return PRINT(EVAL(READ(x), repl_env))
+    x = READ(x)
+    try:
+        x = EVAL(x, repl_env)
+    except Exception as e:
+        return e
+    return PRINT(x)
 
 
 while True:
