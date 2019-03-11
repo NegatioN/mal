@@ -1,5 +1,6 @@
 from functools import reduce
 import operator
+from mal_types import Symbol
 
 from reader import read_str
 from printer import pr_str
@@ -14,7 +15,7 @@ def eval_ast(ast, repl_env):
     if isinstance(ast, list):
         a = [EVAL(x, repl_env) for x in ast]
         return a
-    elif isinstance(ast,str): #TODO implement symbols
+    elif isinstance(ast, Symbol):
         try:
             return repl_env[ast]
         except:

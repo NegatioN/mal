@@ -1,15 +1,11 @@
 import re
+from mal_types import Float, Int, Symbol, String
 
 token_exp = re.compile('''[\s,]*(~@|[\[\]{}()'`~^@]|"(?:\\.|[^\\"])*"?|;.*|[^\s\[\]{}('"`,;)]*)''')
 int_exp = re.compile('-?\d+')
 float_exp = re.compile('-?\d+\\.')
 
 end_map = {'(': ')', '[': ']'}
-
-class MalType:
-    def __init__(self, data):
-        self.data = data
-
 
 class Reader:
     def __init__(self, data):
@@ -34,6 +30,7 @@ def read_str(x):
 
 def tokenize(x):
     return token_exp.findall(x)
+    #return [t for t in token_exp.findall(x) if t[0] != ';']
 
 def read_form(reader):
     data = reader.peek()
@@ -62,8 +59,14 @@ def read_list(reader):
 def read_atom(reader):
     data = reader.next()
     if float_exp.match(data):
-        return float(data)
+        return Float(data)
     elif int_exp.match(data):
-        return int(data)
+        return Int(data)
+    elif data[0] == '"' and len(data) > 2:
+        if data[-1] == '"':
+          return String(data)
+    elif data == 'nil': return None
+    elif data == 'true': return True
+    elif data == 'false': return False
     else:
-        return data
+        return Symbol(data)
