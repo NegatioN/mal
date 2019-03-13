@@ -1,5 +1,5 @@
 import re
-from mal_types import Float, Int, Symbol, String
+from mal_types import Float, Int, String, _to_symbol_type
 
 token_exp = re.compile('''[\s,]*(~@|[\[\]{}()'`~^@]|"(?:\\.|[^\\"])*"?|;.*|[^\s\[\]{}('"`,;)]*)''')
 int_exp = re.compile('-?\d+')
@@ -69,4 +69,4 @@ def read_atom(reader):
     elif data == 'true': return True
     elif data == 'false': return False
     else:
-        return Symbol(data)
+        return _to_symbol_type(data)

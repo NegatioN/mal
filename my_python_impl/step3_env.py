@@ -1,6 +1,6 @@
 from functools import reduce
 import operator
-from mal_types import Symbol, _symbol_like
+from mal_types import SpecialSymbol, Symbol, _specialsymbol_like
 
 from reader import read_str
 from printer import pr_str
@@ -30,9 +30,11 @@ def eval_ast(ast, repl_env):
 def EVAL(ast, repl_env):
     if isinstance(ast, list):
         if len(ast) > 0:
-            if _symbol_like(ast[0], '!def'):
-                repl_env.set(ast[1], EVAL(ast[2], repl_env))
-            elif _symbol_like(ast[0], 'let*'):
+            if _specialsymbol_like(ast[0], 'def!'):
+                evaled = EVAL(ast[2], repl_env)
+                repl_env.set(ast[1], evaled)
+                return evaled
+            elif _specialsymbol_like(ast[0], 'let*'):
                 e = Env(repl_env)
                 counter, let_vals = 0, ast[1]
                 while counter < len(let_vals) - 1:
