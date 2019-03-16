@@ -1,5 +1,5 @@
 from mal_types import SpecialSymbol, Symbol, _specialsymbol_like, Function, \
-    Nil
+    Nil, Int
 
 from reader import read_str
 from printer import pr_str
@@ -40,7 +40,12 @@ def EVAL(ast, repl_env):
 
             elif _specialsymbol_like(ast[0], 'if'):
                 e_cond = EVAL(ast[1], repl_env)
-                if not isinstance(e_cond, Nil) and e_cond != False and e_cond:
+
+                # Bool truth in Python is 1, but 0 is expected.
+                # Special casing. TODO move
+                if isinstance(e_cond, Int):
+                    e_cond = not bool(e_cond)
+                if not isinstance(e_cond, Nil) and e_cond != False:
                     return EVAL(ast[2], repl_env)
                 else:
                     if len(ast) >= 4:
