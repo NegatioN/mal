@@ -6,6 +6,7 @@ int_exp = re.compile('-?\d+')
 float_exp = re.compile('-?\d+\\.')
 
 end_map = {'(': ')', '[': ']'}
+list_starts = list(end_map.keys())
 
 class Reader:
     def __init__(self, data):
@@ -34,7 +35,7 @@ def tokenize(x):
 
 def read_form(reader):
     data = reader.peek()
-    if data in ['(']:
+    if data in list_starts:
         return read_list(reader)
     elif not data:
         return None
