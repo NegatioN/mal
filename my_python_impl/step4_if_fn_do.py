@@ -1,16 +1,13 @@
-from functools import reduce
-import operator
-from mal_types import SpecialSymbol, Symbol, _specialsymbol_like, func_closure
+from mal_types import SpecialSymbol, Symbol, _specialsymbol_like, Function, \
+    Nil
 
 from reader import read_str
 from printer import pr_str
 from env import Env
+from core import ns
 
-repl_env = Env(None)
-repl_env.update({'+': lambda *x: reduce(operator.add, x),
-                 '-': lambda *x: reduce(operator.sub, x),
-                 '*': lambda *x: reduce(operator.mul, x),
-                 '/': lambda *x: reduce(operator.truediv, x)})
+repl_env = Env()
+repl_env.update(ns)
 
 
 def eval_ast(ast, repl_env):
@@ -42,22 +39,21 @@ def EVAL(ast, repl_env):
                 return [eval_ast(x, repl_env) for x in ast[1:]]
 
             elif _specialsymbol_like(ast[0], 'if'):
-                e_cond = eval_ast(ast[1], repl_env)
-                if e_cond is not None or e_cond is not False:
-                    return eval_ast(ast[2], repl_env)
-                if e_cond is False and len(ast) < 4:
-                    return None
-                return eval_ast(ast[3], repl_env)
+                e_cond = EVAL(ast[1], repl_env)
+                if not isinstance(e_cond, Nil) and e_cond != False and e_cond:
+                    return EVAL(ast[2], repl_env)
+                else:
+                    if len(ast) >= 4:
+                        return EVAL(ast[3], repl_env)
+                    return Nil('nil')
 
             elif _specialsymbol_like(ast[0], 'fn*'):
-                # what i actually WANT. is to pass in all params [a, b] etc as "binds"
-                # and the following inputs ast[after_def:] as inputs? or [after_def:num_params]
-                #print(ast)
-                #f_param = eval_ast(ast[1], repl_env)
-                #print(f_param)
-                #n_env = Env(repl_env, ast[2], ast[4])
-                #return EVAL(ast[4], n_env)
-                return func_closure(Env, EVAL, ast, repl_env)
+                def closure(*inp):
+                    return EVAL(ast[2],
+                                Env(repl_env,
+                                    binds=ast[1],
+                                    exprs=inp))
+                return Function(closure)
 
             args = eval_ast(ast, repl_env)
             f = args[0]

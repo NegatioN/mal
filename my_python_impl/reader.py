@@ -1,5 +1,5 @@
 import re
-from mal_types import Float, Int, String, _to_symbol_type
+from mal_types import Float, Int, String, Nil, _to_symbol_type
 
 token_exp = re.compile('''[\s,]*(~@|[\[\]{}()'`~^@]|"(?:\\.|[^\\"])*"?|;.*|[^\s\[\]{}('"`,;)]*)''')
 int_exp = re.compile('-?\d+')
@@ -49,7 +49,7 @@ def read_list(reader):
     end = end_map[start]
     while True:
         data = read_form(reader)
-        if not data:
+        if data == None:
             raise Exception("expected '{}', got EOF".format(end))
         if data == end:
             break
@@ -63,10 +63,10 @@ def read_atom(reader):
         return Float(data)
     elif int_exp.match(data):
         return Int(data)
-    elif data[0] == '"' and len(data) > 2:
+    elif data[0] == '"' and len(data) >= 2:
         if data[-1] == '"':
           return String(data)
-    elif data == 'nil': return None
+    elif data == 'nil': return Nil('nil')
     elif data == 'true': return True
     elif data == 'false': return False
     else:
