@@ -27,22 +27,22 @@ def EVAL(ast, repl_env):
                 repl_env.set(ast[1], evaled)
                 return evaled
             elif _specialsymbol_like(ast[0], 'let*'):
-                e = Env(repl_env)
+                let_env = Env(repl_env)
                 counter, let_vals = 0, ast[1]
                 while counter < len(let_vals) - 1:
                     val1, val2 = let_vals[counter:counter+2]
-                    e.set(val1, EVAL(val2, e))
+                    let_env.set(val1, EVAL(val2, let_env))
                     counter += 2
 
-                return EVAL(ast[2], e)
+                return EVAL(ast[2], let_env)
             elif _specialsymbol_like(ast[0], 'do'):
-                return [eval_ast(x, repl_env) for x in ast[1:]]
+                return eval_ast(ast[1:], repl_env)[-1]
 
             elif _specialsymbol_like(ast[0], 'if'):
                 e_cond = EVAL(ast[1], repl_env)
 
                 # Bool truth in Python is 1, but 0 is expected.
-                # Special casing. TODO move
+                # Special casing. TODO move to types etc
                 if isinstance(e_cond, Int):
                     e_cond = not bool(e_cond)
                 if not isinstance(e_cond, Nil) and e_cond != False:

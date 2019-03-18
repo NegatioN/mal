@@ -1,6 +1,11 @@
 import operator
 from functools import reduce
 from printer import pr_str
+from mal_types import Nil
+
+def prn(x):
+    print(pr_str(x))
+    return Nil('nil')
 
 ns = {'+': lambda *x: reduce(operator.add, x),
       '-': lambda *x: reduce(operator.sub, x),

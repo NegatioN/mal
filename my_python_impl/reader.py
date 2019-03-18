@@ -54,7 +54,6 @@ def read_list(reader):
         if data == end:
             break
         data_list.append(data)
-
     return data_list
 
 def read_atom(reader):
@@ -65,7 +64,7 @@ def read_atom(reader):
         return Int(data)
     elif data[0] == '"' and len(data) >= 2:
         if data[-1] == '"':
-          return String(data)
+          return String(data[1:-1])
     elif data == 'nil': return Nil('nil')
     elif data == 'true': return True
     elif data == 'false': return False
