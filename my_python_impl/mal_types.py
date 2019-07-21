@@ -23,3 +23,13 @@ def _to_symbol_type(val):
 
 def _is_nil(val):
     return isinstance(val, Nil)
+
+def _cast_internal(val):
+    if type(val) == int:
+        return Int(val)
+    elif type(val) == float:
+         return Float(val)
+    elif type(val) == str:
+         return String(val)
+    elif val == None:
+         return Nil("nil")

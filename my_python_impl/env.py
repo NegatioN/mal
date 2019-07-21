@@ -31,6 +31,9 @@ class Env:
         except Exception as e:
             raise Exception('Symbol not found.', e)
 
+    def __str__(self):
+        return str(self.data)
+
 def to_list(x):
     try:
         iter(x)

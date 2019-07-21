@@ -45,6 +45,7 @@ def EVAL(ast, repl_env):
                 # Special casing. TODO move to types etc
                 if isinstance(e_cond, Int):
                     e_cond = not bool(e_cond)
+
                 if not isinstance(e_cond, Nil) and e_cond != False:
                     return EVAL(ast[2], repl_env)
                 else:
