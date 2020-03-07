@@ -12,6 +12,16 @@ class Function:
     def __str__(self):
         return '#<function>'
 
+class TCOFunction:
+    def __init__(self, f, ast, env):
+        self.f, self.ast, self.params, self.env = f, ast[2], ast[1], env
+
+    def __call__(self, *args, **kwargs):
+        return self.f(self.ast)
+
+    def __str__(self):
+        return '#<TCOfunction>'
+
 special_symbols = ['def!', 'let*', 'if', 'do', 'fn*']
 
 
