@@ -1,14 +1,13 @@
-from mal_types import String, Symbol, _specialsymbol_like, Function, Int
+from mal_types import Symbol, _specialsymbol_like, Function, Int
 
 from reader import read_str
 from printer import pr_str
 from env import Env
 from mal_types import Nil
-from core import ns
+from core import ns, mal_macros
 
 repl_env = Env(None)
 repl_env.update(ns)
-
 
 def eval_ast(ast, repl_env):
     if isinstance(ast, list):
@@ -87,6 +86,9 @@ def rep(x):
     except Exception as e:
         return e
     return PRINT(x)
+
+# bootstrap macros
+[rep(x) for x in mal_macros]
 
 
 while True:

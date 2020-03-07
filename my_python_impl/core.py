@@ -26,3 +26,4 @@ ns = {'+': lambda *x: _cast_internal(reduce(operator.add, x)),
       '<=': lambda x,y: x <= y,
       }
 
+mal_macros = ['(def! not (fn* (a) (if a false true)))']
