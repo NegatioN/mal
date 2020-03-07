@@ -43,7 +43,7 @@ def EVAL(ast, repl_env):
 
                 if not isinstance(o, Nil) and o:
                     return EVAL(ast[2], repl_env)
-                return EVAL(ast[3], repl_env) if len(ast) >= 4 else Nil
+                return EVAL(ast[3], repl_env) if len(ast) >= 4 else Nil('nil')
 
             elif _specialsymbol_like(arg1, 'def!'):
                 evaled = EVAL(ast[2], repl_env)

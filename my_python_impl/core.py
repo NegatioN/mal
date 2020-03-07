@@ -1,7 +1,7 @@
 import operator
 from functools import reduce
 from printer import pr_str
-from mal_types import Nil, _cast_internal
+from mal_types import Nil, _cast_internal, Int
 
 def prn(x):
     print(pr_str(x))
