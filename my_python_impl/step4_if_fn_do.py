@@ -1,13 +1,16 @@
-from mal_types import SpecialSymbol, Symbol, _specialsymbol_like, Function, \
-    Nil, Int
+from functools import reduce
+import operator
+from mal_types import SpecialSymbol, Symbol, _specialsymbol_like
 
 from reader import read_str
 from printer import pr_str
 from env import Env
-from core import ns
 
-repl_env = Env()
-repl_env.update(ns)
+repl_env = Env(None)
+repl_env.update({'+': lambda *x: reduce(operator.add, x),
+                 '-': lambda *x: reduce(operator.sub, x),
+                 '*': lambda *x: reduce(operator.mul, x),
+                 '/': lambda *x: reduce(operator.truediv, x)})
 
 
 def eval_ast(ast, repl_env):
@@ -15,9 +18,14 @@ def eval_ast(ast, repl_env):
         a = [EVAL(x, repl_env) for x in ast]
         return a
     elif isinstance(ast, Symbol):
-        return repl_env.get(ast)
+        try:
+            return repl_env.get(ast)
+        except:
+            raise Exception('Couldnt locate symbol: {}'.format(ast))
     else:
         return ast
+
+
 
 def EVAL(ast, repl_env):
     if isinstance(ast, list):
@@ -27,39 +35,16 @@ def EVAL(ast, repl_env):
                 repl_env.set(ast[1], evaled)
                 return evaled
             elif _specialsymbol_like(ast[0], 'let*'):
-                let_env = Env(repl_env)
+                e = Env(repl_env)
                 counter, let_vals = 0, ast[1]
                 while counter < len(let_vals) - 1:
                     val1, val2 = let_vals[counter:counter+2]
-                    let_env.set(val1, EVAL(val2, let_env))
+                    e.set(val1, EVAL(val2, e))
                     counter += 2
 
-                return EVAL(ast[2], let_env)
-            elif _specialsymbol_like(ast[0], 'do'):
-                return eval_ast(ast[1:], repl_env)[-1]
+                return EVAL(ast[2], e)
 
-            elif _specialsymbol_like(ast[0], 'if'):
-                e_cond = EVAL(ast[1], repl_env)
 
-                # Bool truth in Python is 1, but 0 is expected.
-                # Special casing. TODO move to types etc
-                if isinstance(e_cond, Int):
-                    e_cond = not bool(e_cond)
-
-                if not isinstance(e_cond, Nil) and e_cond != False:
-                    return EVAL(ast[2], repl_env)
-                else:
-                    if len(ast) >= 4:
-                        return EVAL(ast[3], repl_env)
-                    return Nil('nil')
-
-            elif _specialsymbol_like(ast[0], 'fn*'):
-                def closure(*inp):
-                    return EVAL(ast[2],
-                                Env(repl_env,
-                                    binds=ast[1],
-                                    exprs=inp))
-                return Function(closure)
 
             args = eval_ast(ast, repl_env)
             f = args[0]
