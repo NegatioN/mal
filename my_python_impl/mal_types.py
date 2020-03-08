@@ -5,6 +5,31 @@ class String(str): pass
 class SpecialSymbol(str): pass
 class Nil(str): pass
 
+valid_primitives = {Symbol, Int, Float, String, SpecialSymbol}
+
+class Atom(Symbol, Int, Float, String, SpecialSymbol):
+    pass
+
+
+class Atom:
+    def __init__(self, value):
+        self.set(value)
+
+    def __str__(self):
+        return f'(atom {str(self.value)})'
+
+    def set(self, v):
+        if isinstance(v, Atom):
+            self.value = v.value
+        else:
+            assert True in [isinstance(v, x) for x in valid_primitives], 'Atom not set to valid type.'
+            self.value = v
+        return self.value
+
+    def get(self):
+        return self.value
+
+
 class Function:
     def __init__(self, f):
         self.f = f
@@ -36,11 +61,14 @@ def _is_nil(val):
     return isinstance(val, Nil)
 
 def _cast_internal(val):
-    if type(val) == int:
+    vtype = type(val)
+    if vtype == Atom:
+        return _cast_internal(val.get())
+    elif vtype == int:
         return Int(val)
-    elif type(val) == float:
+    elif vtype == float:
          return Float(val)
-    elif type(val) == str:
+    elif vtype == str:
          return String(val)
     elif val == None:
          return Nil("nil")
