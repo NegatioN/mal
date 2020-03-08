@@ -42,7 +42,7 @@ def EVAL(ast, repl_env):
                     if o == '' or o == []:
                         o = True
 
-                    if not isinstance(o, Nil):
+                    if not isinstance(o, Nil) and o:
                         ast = ast[2]
                     else:
                         ast = ast[3] if len(ast) >= 4 else Nil('nil')
@@ -75,12 +75,9 @@ def EVAL(ast, repl_env):
                 f, args = r[0], r[1:]
                 if isinstance(f, TCOFunction):
                     ast = f.ast
-                    print(ast, f.params, args)
                     repl_env = Env(outer=f.env, binds=f.params, exprs=args)
                     continue
                 else:
-                    print(f, args)
-                    print(inspect.getsource(f))
                     return f(*args)
             else:
                 return ast
