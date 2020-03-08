@@ -4,6 +4,7 @@ class Float(float): pass
 class String(str): pass
 class SpecialSymbol(str): pass
 class Nil(str): pass
+
 class Function:
     def __init__(self, f):
         self.f = f
@@ -22,7 +23,7 @@ class TCOFunction:
     def __str__(self):
         return '#<TCOfunction>'
 
-special_symbols = ['def!', 'let*', 'if', 'do', 'fn*']
+special_symbols = {'def!', 'let*', 'if', 'do', 'fn*'}
 
 
 def _specialsymbol_like(s, val):
