@@ -16,6 +16,12 @@ def swap(a, f, *args):
     a.set(f.f(a.get(), *args))
     return a.get()
 
+def concat(*lists):
+    ml = []
+    for l in lists:
+        ml.extend(l)
+    return ml
+
 ns = {'+': lambda *x: _cast_internal(reduce(operator.add, x)),
       '-': lambda *x: _cast_internal(reduce(operator.sub, x)),
       '*': lambda *x: _cast_internal(reduce(operator.mul, x)),
@@ -38,6 +44,8 @@ ns = {'+': lambda *x: _cast_internal(reduce(operator.add, x)),
       'deref': lambda x: x.get(),
       'reset!': lambda a,v: a.set(v),
       'swap!': swap,
+      'cons': lambda a, l: [a] + l,
+      'concat': concat,
       }
 
 mal_macros = ['(def! not (fn* (a) (if a false true)))',

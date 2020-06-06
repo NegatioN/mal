@@ -45,7 +45,7 @@ class TCOFunction:
     def __str__(self):
         return '#<TCOfunction>'
 
-special_symbols = {'def!', 'let*', 'if', 'do', 'fn*'}
+special_symbols = {'def!', 'let*', 'if', 'do', 'fn*', 'quote', 'quasiquote'}
 
 
 def _specialsymbol_like(s, val):
