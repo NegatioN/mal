@@ -7,9 +7,6 @@ class Nil(str): pass
 
 valid_primitives = {Symbol, Int, Float, String, SpecialSymbol}
 
-class Atom(Symbol, Int, Float, String, SpecialSymbol):
-    pass
-
 
 class Atom:
     def __init__(self, value):

@@ -12,16 +12,9 @@ def equals(x, y):
     return isinstance(x, type(y)) and x == y
 
 def swap(a, f, *args):
-    print(a.get(), type(a.get()), args, f.ast, f.params, f.env)
-    if len(args) > 0:
-        print('len')
-        v = f(a.get(), *args)
-    else:
-        print('nolen')
-        v = f(a.get())
-    #v = f(a.get(), *args) if len(args) > 0 else f(a.get())
-    a.set(v)
-    return v
+    #TODO? all functions are TCOFunctions, therefore we get the "normal version" that is owned by TCOFunction
+    a.set(f.f(a.get(), *args))
+    return a.get()
 
 ns = {'+': lambda *x: _cast_internal(reduce(operator.add, x)),
       '-': lambda *x: _cast_internal(reduce(operator.sub, x)),
@@ -50,5 +43,6 @@ ns = {'+': lambda *x: _cast_internal(reduce(operator.add, x)),
 mal_macros = ['(def! not (fn* (a) (if a false true)))',
               '(def! load-file (fn* (f) (eval (read-string (str "(do " (slurp f) "\nnil)")))))',
               '(def! a (atom 2))',
-              '(def! inc3 (fn* (a) (+ 3 a)))'
+              '(def! inc3 (fn* [a] (+ 3 a)))',
+              '(def! swag (fn* [a] (prn a)))'
               ]
