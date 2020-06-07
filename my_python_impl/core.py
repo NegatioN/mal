@@ -45,10 +45,28 @@ ns = {'+': lambda *x: _cast_internal(reduce(operator.add, x)),
       'reset!': lambda a,v: a.set(v),
       'swap!': swap,
       'cons': lambda a, l: [a] + l,
-      'concat': concat
+      'concat': concat,
+      'nth': lambda l, n: l[n],
       }
+
+def first(l):
+    if l != Nil('nil'):
+        if not ns['empty?'](l):
+            return l[0]
+    return Nil('nil')
+
+def rest(l):
+    if l != Nil('nil'):
+        if ns['count'](l) >= 2:
+            return l[1:]
+
+    return []
+
+
+ns.update({'first': first,
+           'rest': rest})
 
 mal_macros = ['(def! not (fn* (a) (if a false true)))',
               '(def! load-file (fn* (f) (eval (read-string (str "(do " (slurp f) "\nnil)")))))',
-              "defmacro! cond (fn* (& xs) (if (> (count xs) 0) (list 'if (first xs) (if (> (count xs) 1) (nth xs 1) (throw \"odd number of forms to cond\")) (cons 'cond (rest (rest xs)))))))",
+              """(defmacro! cond (fn* (& xs) (if (> (count xs) 0) (list 'if (first xs) (if (> (count xs) 1) (nth xs 1) (throw "odd number of forms to cond")) (cons 'cond (rest (rest xs)))))))""",
               ]
