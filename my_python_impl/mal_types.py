@@ -7,6 +7,7 @@ class Nil(str): pass
 
 valid_primitives = {Symbol, Int, Float, String, SpecialSymbol}
 
+debug = False
 
 class Atom:
     def __init__(self, value):
@@ -33,11 +34,14 @@ class Function:
         self.is_macro = False
 
     def gen_env(self, args):
-        return self.Env(self.env, self.params, args)
+        return self.Env(outer=self.env, binds=self.params, exprs=args)
 
     def __call__(self, *inp):
-        #print(self.env, self.params, inp, self.ast)
-        sub_env = self.Env(outer=self.env, binds=self.params, exprs=inp)
+        sub_env = self.gen_env(*inp)
+        if debug:
+            print('INP:', *inp)
+            print('PARAMS:', self.params)
+            print('SUB_ENV:', sub_env)
         return self.Eval(self.ast, sub_env)
 
 special_symbols = {'def!', 'defmacro!', 'let*', 'if', 'do', 'fn*', 'quote', 'quasiquote', 'macroexpand'}

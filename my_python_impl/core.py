@@ -51,8 +51,4 @@ ns = {'+': lambda *x: _cast_internal(reduce(operator.add, x)),
 mal_macros = ['(def! not (fn* (a) (if a false true)))',
               '(def! load-file (fn* (f) (eval (read-string (str "(do " (slurp f) "\nnil)")))))',
               "defmacro! cond (fn* (& xs) (if (> (count xs) 0) (list 'if (first xs) (if (> (count xs) 1) (nth xs 1) (throw \"odd number of forms to cond\")) (cons 'cond (rest (rest xs)))))))",
-              '(def! tester (fn* (a) `a))',
-              '(defmacro! test (fn* (a) `a))',
-              '(def! tezt (fn* (a) a))',
-              '(defmacro! unless (fn* (pred) `(if ~pred)))'
               ]

@@ -15,10 +15,7 @@ def eval_ast(ast, repl_env):
         a = [EVAL(x, repl_env) for x in ast]
         return a
     elif isinstance(ast, Symbol):
-        try:
-            return repl_env.get(ast)
-        except:
-            raise Exception('Couldnt locate symbol: {}'.format(ast))
+        return repl_env.get(ast)
     else:
         return ast
 
@@ -51,11 +48,7 @@ def macroexpand(ast, env):
     while is_macro_call(ast, env):
         macro_f = env.get(ast[0])
         args = ast[1:]
-        #ast = macro_f.ast
-        #env = macro_f.gen_env(args)
         ast = macro_f(args)
-        #print(ast, env)
-
     return ast
 
 def EVAL(ast, repl_env):
@@ -81,7 +74,8 @@ def EVAL(ast, repl_env):
         elif _specialsymbol_like(arg1, 'defmacro!'):
             evaled = EVAL(ast[2], repl_env)
             evaled.is_macro = True
-            return repl_env.set(ast[1], evaled)
+            repl_env.set(ast[1], evaled)
+            return evaled
 
         elif _specialsymbol_like(arg1, 'macroexpand'):
             return macroexpand(ast[1], repl_env)

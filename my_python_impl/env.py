@@ -1,3 +1,4 @@
+debug = False
 class Env:
     def __init__(self, outer=None, binds=None, exprs=None):
         self.data = {}
@@ -17,19 +18,22 @@ class Env:
             if self.outer:
                 return self.outer.find(symbol)
             else:
-                raise e
+                if debug:
+                    print("")
+                    print('INNER:', self.data)
+                    print('OUTER:', self.outer)
+                raise Exception('Symbol not found', e)
 
     def bind_exprs(self, binds, exprs):
         binds, exprs = to_list(binds), to_list(exprs)
+        if debug:
+            print('BIND_EXPRS:', binds, exprs)
         if binds and exprs:
             for b, e in zip(binds, exprs):
                 self.set(b, e)
 
     def get(self, symbol):
-        try:
-            return self.find(symbol)
-        except Exception as e:
-            raise Exception('Symbol not found.', e)
+        return self.find(symbol)
 
     def __str__(self):
         return str(self.data)
