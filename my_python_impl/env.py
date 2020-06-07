@@ -26,11 +26,20 @@ class Env:
 
     def bind_exprs(self, binds, exprs):
         binds, exprs = to_list(binds), to_list(exprs)
+
+        variadic = '&' in binds
+        if variadic:
+            i = binds.index('&')
+            binds.pop(i)
+            variadic_sym = binds[i]
+            binds.pop(i)
         if debug:
             print('BIND_EXPRS:', binds, exprs)
         if binds and exprs:
             for b, e in zip(binds, exprs):
                 self.set(b, e)
+        if variadic:
+            self.set(variadic_sym, exprs[len(binds):])
 
     def get(self, symbol):
         return self.find(symbol)
@@ -41,6 +50,6 @@ class Env:
 def to_list(x):
     try:
         iter(x)
-        return x
+        return x.copy()
     except TypeError as te:
         return [x]
