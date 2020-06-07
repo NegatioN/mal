@@ -31,7 +31,6 @@ def read_str(x):
 
 def tokenize(x):
     return token_exp.findall(x)
-    #return [t for t in token_exp.findall(x) if t[0] != ';']
 
 def read_form(reader):
     data = reader.peek()
@@ -40,7 +39,19 @@ def read_form(reader):
     elif not data:
         return None
     else:
-        return read_atom(reader)
+        data = reader.next()
+        if data == '@':
+            return [_to_symbol_type('deref'), read_form(reader)]
+        elif data == '\'':
+            return [_to_symbol_type('quote'), read_form(reader)]
+        elif data == '`':
+            return [_to_symbol_type('quasiquote'), read_form(reader)]
+        elif data == '~':
+            return [_to_symbol_type('unquote'), read_form(reader)]
+        elif data == '~@':
+            return [_to_symbol_type('splice-unquote'), read_form(reader)]
+
+        return read_atom(data)
 
 
 def read_list(reader):
@@ -56,8 +67,7 @@ def read_list(reader):
         data_list.append(data)
     return data_list
 
-def read_atom(reader):
-    data = reader.next()
+def read_atom(data):
     if float_exp.match(data):
         return Float(data)
     elif int_exp.match(data):

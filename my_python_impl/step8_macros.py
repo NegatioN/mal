@@ -38,13 +38,35 @@ def quasiquote(ast):
         if ast[0][0] == 'splice-unquote':
             p1, p2 = ast[0][1], quasiquote(ast[1:])
             return [_to_symbol_type('concat'), p1, p2]
-
     return [_to_symbol_type('cons'), quasiquote(ast[0]), quasiquote(ast[1:])]
+
+def is_macro_call(ast, env):
+    try:
+        data = env.get(ast[0]) # exists in env
+        return data.is_macro
+    except:
+        return False
+
+def macroexpand(ast, env):
+    while is_macro_call(ast, env):
+        macro_f = env.get(ast[0])
+        args = ast[1:]
+        #ast = macro_f.ast
+        #env = macro_f.gen_env(args)
+        ast = macro_f(args)
+        #print(ast, env)
+
+    return ast
 
 def EVAL(ast, repl_env):
     while True:
 
         if not isinstance(ast, list):
+            return eval_ast(ast, repl_env)
+
+        ast = macroexpand(ast, repl_env)
+
+        if not isinstance(ast, list):  # Macro-expansion can return singleton.
             return eval_ast(ast, repl_env)
 
         if len(ast) == 0:
@@ -55,6 +77,14 @@ def EVAL(ast, repl_env):
             evaled = EVAL(ast[2], repl_env)
             repl_env.set(ast[1], evaled)
             return evaled
+
+        elif _specialsymbol_like(arg1, 'defmacro!'):
+            evaled = EVAL(ast[2], repl_env)
+            evaled.is_macro = True
+            return repl_env.set(ast[1], evaled)
+
+        elif _specialsymbol_like(arg1, 'macroexpand'):
+            return macroexpand(ast[1], repl_env)
 
         elif _specialsymbol_like(arg1, 'let*'):
             e = Env(repl_env)
@@ -119,7 +149,8 @@ def rep(x):
         return e
     return PRINT(x)
 
-
+# bootstrap macros
+[rep(x) for x in mal_macros]
 
 while True:
     data = input('user> ')

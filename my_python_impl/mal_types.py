@@ -28,24 +28,19 @@ class Atom:
 
 
 class Function:
-    def __init__(self, f):
-        self.f = f
-    def __call__(self, *args, **kwargs):
-        return self.f(*args, **kwargs)
-    def __str__(self):
-        return '#<function>'
+    def __init__(self, Eval, Env, ast, env, params):
+        self.Eval, self.Env, self.ast, self.env, self.params = Eval, Env, ast, env, params
+        self.is_macro = False
 
-class TCOFunction:
-    def __init__(self, f, ast, env):
-        self.f, self.ast, self.params, self.env = f, ast[2], ast[1], env
+    def gen_env(self, args):
+        return self.Env(self.env, self.params, args)
 
-    def __call__(self, *args, **kwargs):
-        return self.f(self.ast)
+    def __call__(self, *inp):
+        #print(self.env, self.params, inp, self.ast)
+        sub_env = self.Env(outer=self.env, binds=self.params, exprs=inp)
+        return self.Eval(self.ast, sub_env)
 
-    def __str__(self):
-        return '#<TCOfunction>'
-
-special_symbols = {'def!', 'let*', 'if', 'do', 'fn*', 'quote', 'quasiquote'}
+special_symbols = {'def!', 'defmacro!', 'let*', 'if', 'do', 'fn*', 'quote', 'quasiquote', 'macroexpand'}
 
 
 def _specialsymbol_like(s, val):
