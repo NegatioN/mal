@@ -53,7 +53,6 @@ def macroexpand(ast, env):
 
 def EVAL(ast, repl_env):
     while True:
-
         if not isinstance(ast, list):
             return eval_ast(ast, repl_env)
 
@@ -88,8 +87,7 @@ def EVAL(ast, repl_env):
                 e.set(val1, EVAL(val2, e))
                 counter += 2
 
-            repl_env = e
-            ast = ast[1]
+            ast = EVAL(ast[2], e)
 
         elif _specialsymbol_like(arg1, 'quote'):
             return ast[1]
